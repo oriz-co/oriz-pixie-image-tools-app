@@ -1,32 +1,24 @@
 ---
 import BaseLayout from '~/layouts/BaseLayout.astro'
-import { AccountPanel } from '@chirag127/oriz-ui'
+import AccountPanel from '~/components/AccountPanel'
 ---
 
 <BaseLayout
-  title="Account — Image Tools"
+  title="Account — image-tools"
   description="Sign in to oriz. One account works across every oriz site."
   noindex={true}
 >
-  <header class="container-prose page-head">
-    <p class="eyebrow"><a href="/">Image Tools</a> / Account</p>
+  <header class="spine page-head">
+    <p class="eyebrow"><a href="/">image-tools</a> / account</p>
     <h1>Account</h1>
     <p class="lede">
-      One sign-in works across every oriz site. Image Tools runs entirely in your
-      browser and never needs an account, but signing in lets you carry preferences
-      across the family.
+      Image Tools runs entirely in your browser and never needs an account.
+      Signing in is optional — it only carries your preferences across the
+      rest of the oriz family.
     </p>
   </header>
 
-  <section class="container-prose">
-    <AccountPanel client:load />
+  <section class="spine">
+    <AccountPanel client:load siteName="Image Tools" />
   </section>
 </BaseLayout>
-
-<style>
-  .page-head { padding-block: 3rem 1.5rem; border-bottom: 1px solid var(--color-border); }
-  .eyebrow { color: var(--color-fg-muted); font-size: 0.8125rem; margin: 0 0 0.5rem; }
-  .eyebrow a { color: var(--color-fg-muted); text-decoration: none; }
-  h1 { font-family: var(--font-serif); font-size: clamp(2rem, 4vw, 2.75rem); font-weight: 600; letter-spacing: -0.02em; margin: 0; }
-  .lede { color: var(--color-fg-muted); margin: 0.75rem 0 0; font-size: 1.0625rem; max-width: 56ch; }
-</style>

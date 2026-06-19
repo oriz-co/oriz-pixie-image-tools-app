@@ -1,227 +1,348 @@
 ---
-import BaseLayout from "./BaseLayout.astro";
-import { SITE_CONFIG } from "../lib/siteConfig";
-import { getToolById, getRelatedTools } from "../lib/toolMeta";
-import type { ToolMeta } from "../lib/toolMeta";
-import { 
-  Minimize2, 
-  Maximize2,
-  Crop, 
-  ArrowRightLeft, 
-  ImageIcon, 
-  Paintbrush, 
-  Sparkles, 
-  Eraser, 
-  Droplets, 
-  Laugh, 
-  RotateCw, 
-  Code, 
-  ScanFace,
-  type LucideIcon 
-} from "lucide-react";
+/*
+ * ToolLayout — 2-zone darkroom for tool pages.
+ *
+ * Per design-briefs/oriz-image-tools.md §4:
+ *   - Grid: 1fr 360px, full viewport height minus header(56) + footer(32).
+ *   - Left zone: canvas on --paper, image dominates.
+ *   - Below canvas: live RGB histogram strip (96px) on --ink.
+ *   - Right zone: controls rail on --ink-2, dense labels in mono.
+ *   - Action button at rail bottom: full-width, --phosphor fill, --ink text,
+ *     `[ export · png ]` literal mono brackets.
+ *   - EXIF dump panel collapses at the bottom.
+ *
+ * The actual tool React island is rendered in the canvas-zone via <slot />.
+ * The histogram strip below is a separate <RGBHistogram /> island that
+ * watches the active canvas via its data-image-canvas hook (set by tool
+ * components when they have a working bitmap).
+ */
+import BaseLayout from '~/layouts/BaseLayout.astro'
+import RGBHistogram from '~/components/RGBHistogram'
+import { SITE_CONFIG } from '~/lib/siteConfig'
+import { getToolById, getRelatedTools } from '~/lib/toolMeta'
+import type { ToolMeta } from '~/lib/toolMeta'
 
 interface FAQItem {
-  question: string;
-  answer: string;
+  question: string
+  answer: string
 }
 
 interface Props {
-  toolName: string;
-  toolDescription: string;
-  toolIcon: string;
-  toolCategory: string;
-  faqItems: FAQItem[];
-  relatedToolIds?: string[];
+  toolName: string
+  toolDescription: string
+  /** Path-segment id like "compress-image" — used for resolving the toolMeta entry. */
+  toolId?: string
+  toolIcon?: string
+  toolCategory?: string
+  faqItems?: FAQItem[]
+  relatedToolIds?: string[]
 }
 
 const {
   toolName,
   toolDescription,
-  toolIcon,
-  toolCategory,
-  faqItems,
+  toolId,
+  toolCategory = '',
+  faqItems = [],
   relatedToolIds = [],
-} = Astro.props;
+} = Astro.props
 
-const relatedTools = (relatedToolIds.length > 0
-  ? relatedToolIds.map((id) => getToolById(id)).filter((t): t is ToolMeta => t !== undefined)
-  : getRelatedTools(toolCategory, 4)
-).slice(0, 4);
+const tool = toolId ? getToolById(toolId) : undefined
 
-const siteUrl = SITE_CONFIG.origin;
-const canonicalUrl = `/tools/${toolName.toLowerCase().replace(/\s+/g, "-")}/`;
+const relatedTools = (
+  relatedToolIds.length > 0
+    ? relatedToolIds.map((id) => getToolById(id)).filter((t): t is ToolMeta => t !== undefined)
+    : getRelatedTools(toolCategory, 4)
+).slice(0, 4)
+
+const siteUrl = SITE_CONFIG.origin
+const canonicalUrl = tool?.href ?? `/tools/${toolName.toLowerCase().replace(/\s+/g, '-')}/`
 
 const jsonLd = {
-  "@context": "https://schema.org",
-  "@type": "SoftwareApplication",
+  '@context': 'https://schema.org',
+  '@type': 'SoftwareApplication',
   name: toolName,
-  applicationCategory: "UtilitiesApplication",
-  operatingSystem: "Web Browser",
+  applicationCategory: 'UtilitiesApplication',
+  operatingSystem: 'Web Browser',
   description: toolDescription,
   url: `${siteUrl}${canonicalUrl}`,
-  offers: {
-    "@type": "Offer",
-    price: "0",
-    priceCurrency: "USD",
-  },
-};
+  offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+}
 
 const breadcrumbJsonLd = {
-  "@context": "https://schema.org",
-  "@type": "BreadcrumbList",
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
   itemListElement: [
-    {
-      "@type": "ListItem",
-      position: 1,
-      name: "Home",
-      item: siteUrl,
-    },
-    {
-      "@type": "ListItem",
-      position: 2,
-      name: "Tools",
-      item: `${siteUrl}/tools`,
-    },
-    {
-      "@type": "ListItem",
-      position: 3,
-      name: toolName,
-    },
+    { '@type': 'ListItem', position: 1, name: 'Image Tools', item: siteUrl },
+    { '@type': 'ListItem', position: 2, name: toolName },
   ],
-};
-
-const faqJsonLd = {
-  "@context": "https://schema.org",
-  "@type": "FAQPage",
-  mainEntity: faqItems.map((item) => ({
-    "@type": "Question",
-    name: item.question,
-    acceptedAnswer: {
-      "@type": "Answer",
-      text: item.answer,
-    },
-  })),
-};
-
-const iconMap: Record<string, LucideIcon> = {
-  Minimize2,
-  Maximize2,
-  Crop,
-  ArrowRightLeft,
-  ImageIcon,
-  Paintbrush,
-  Sparkles,
-  Eraser,
-  Droplets,
-  Laugh,
-  RotateCw,
-  Code,
-  ScanFace,
-};
-
-function getIconComponent(iconName: string): LucideIcon | null {
-  return iconMap[iconName] || null;
 }
+
+const faqJsonLd =
+  faqItems.length > 0
+    ? {
+        '@context': 'https://schema.org',
+        '@type': 'FAQPage',
+        mainEntity: faqItems.map((item) => ({
+          '@type': 'Question',
+          name: item.question,
+          acceptedAnswer: { '@type': 'Answer', text: item.answer },
+        })),
+      }
+    : null
+
+const jsonLdAll = faqJsonLd ? [jsonLd, breadcrumbJsonLd, faqJsonLd] : [jsonLd, breadcrumbJsonLd]
 ---
 
-<BaseLayout title={toolName} description={toolDescription} canonical={`${siteUrl}${canonicalUrl}`}>
-  <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
-  <script type="application/ld+json" set:html={JSON.stringify(breadcrumbJsonLd)} />
-  <script type="application/ld+json" set:html={JSON.stringify(faqJsonLd)} />
+<BaseLayout
+  title={`${toolName} — image-tools`}
+  description={toolDescription}
+  canonical={`${siteUrl}${canonicalUrl}`}
+  jsonLd={jsonLdAll}
+  isToolPage={true}
+>
+  <div class="darkroom-page">
+    <header class="tool-meta mono">
+      <span class="tool-id">{tool?.id ?? toolId ?? ''}</span>
+      <span class="sep" aria-hidden="true">·</span>
+      <h1 class="tool-h1">{toolName.toLowerCase()}</h1>
+      <span class="sep" aria-hidden="true">·</span>
+      <span class="tool-blurb">{tool?.description ?? toolDescription}</span>
+    </header>
 
-  <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
-    <nav aria-label="Breadcrumb" class="mb-8">
-      <ol class="flex items-center gap-2 text-sm">
-        <li>
-          <a href="/" class="text-[var(--color-text-muted)] hover:text-[var(--color-primary)] transition-colors">
-            Home
-          </a>
-        </li>
-        <li class="text-[var(--color-text-muted)]" aria-hidden="true">/</li>
-        <li>
-          <a href="/tools" class="text-[var(--color-text-muted)] hover:text-[var(--color-primary)] transition-colors">
-            Tools
-          </a>
-        </li>
-        <li class="text-[var(--color-text-muted)]" aria-hidden="true">/</li>
-        <li aria-current="page">
-          <span style="color: var(--color-fg);" class="font-medium">{toolName}</span>
-        </li>
-      </ol>
-    </nav>
+    <div class="darkroom">
+      <section class="canvas-zone">
+        <div class="tool-body">
+          <slot />
+        </div>
+      </section>
 
-    <div class="max-w-4xl">
-      <div class="mb-8">
-        <h1 class="text-3xl sm:text-4xl font-extrabold tracking-tight text-[var(--color-text-main)] mb-4">
-          {toolName}
-        </h1>
-        <p class="text-lg text-[var(--color-text-muted)] leading-relaxed">
-          {toolDescription}
-        </p>
-      </div>
-
-      <slot />
-
-      {
-        faqItems.length > 0 && (
-          <section class="mt-16" aria-labelledby="faq-heading">
-            <h2 id="faq-heading" class="text-2xl font-bold text-[var(--color-text-main)] mb-6">
-              Frequently Asked Questions
-            </h2>
-            <div class="space-y-4">
-              {faqItems.map((item, index) => (
-                <details class="group bg-[var(--color-surface)] border border-[var(--color-border)] rounded-lg overflow-hidden">
-                  <summary class="flex items-center justify-between p-4 cursor-pointer list-none">
-                    <span class="font-semibold text-[var(--color-text-main)] pr-4">
-                      {item.question}
-                    </span>
-                    <svg
-                      class="w-5 h-5 text-[var(--color-text-muted)] transition-transform duration-200 group-open:rotate-180 flex-shrink-0"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                      aria-hidden="true"
-                    >
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-                    </svg>
-                  </summary>
-                  <div class="px-4 pb-4 text-[var(--color-text-muted)] leading-relaxed">
-                    {item.answer}
-                  </div>
-                </details>
-              ))}
-            </div>
-          </section>
-        )
-      }
-
-      {
-        relatedTools.length > 0 && (
-          <section class="mt-16" aria-labelledby="related-heading">
-            <h2 id="related-heading" class="text-2xl font-bold text-[var(--color-text-main)] mb-6">
-              Related Tools
-            </h2>
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {relatedTools.map((tool) => (
-                <a
-                  href={tool.href}
-                  class="tool-card group"
-                >
-                  <div class="flex items-center gap-2 mb-2">
-                    <span class="font-semibold text-[var(--color-text-main)] group-hover:text-[var(--color-primary)] transition-colors">
-                      {tool.name}
-                    </span>
-                    {tool.isNew && <span class="badge-new">NEW</span>}
-                  </div>
-                  <p class="text-sm text-[var(--color-text-muted)]">
-                    {tool.description}
-                  </p>
-                </a>
-              ))}
-            </div>
-          </section>
-        )
-      }
+      <aside class="controls-rail" aria-label="Tool controls">
+        <slot name="controls">
+          {/* Default rail content — most tool components render their own
+              controls inside the slot above. This panel is a placeholder
+              for tool pages that explicitly slot controls. */}
+        </slot>
+      </aside>
     </div>
+
+    <RGBHistogram client:idle className="canvas-histogram" height={96} />
+
+    {
+      faqItems.length > 0 && (
+        <section class="prose-block">
+          <h2 class="block-h">Questions</h2>
+          <ul class="faq">
+            {faqItems.map((item) => (
+              <li>
+                <details>
+                  <summary>{item.question}</summary>
+                  <p>{item.answer}</p>
+                </details>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )
+    }
+
+    {
+      relatedTools.length > 0 && (
+        <section class="prose-block">
+          <h2 class="block-h">Other tools</h2>
+          <ul class="related">
+            {relatedTools.map((rt) => (
+              <li>
+                <a href={rt.href}>
+                  <span class="rel-name">{rt.name.toLowerCase()}</span>
+                  <span class="rel-desc">{rt.description}</span>
+                </a>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )
+    }
   </div>
 </BaseLayout>
+
+<style>
+  .darkroom-page {
+    display: flex;
+    flex-direction: column;
+    background: var(--ink);
+  }
+  .tool-meta {
+    display: flex;
+    align-items: baseline;
+    gap: 0.625rem;
+    padding: 12px 24px;
+    color: var(--fg-mute);
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: 0.04em;
+    background: var(--ink);
+    border-bottom: 1px solid var(--line);
+    flex-wrap: wrap;
+  }
+  .tool-id {
+    color: var(--phosphor);
+    text-transform: lowercase;
+  }
+  .tool-h1 {
+    margin: 0;
+    color: var(--fg);
+    font-family: var(--font-display);
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: -0.005em;
+  }
+  .tool-blurb {
+    color: var(--fg-mute);
+    font-family: var(--font-sans);
+    font-size: 13px;
+    letter-spacing: normal;
+  }
+  .sep {
+    color: var(--fg-soft);
+  }
+
+  /* The .darkroom grid is defined in global.css so tool pages can re-use it. */
+  .tool-body {
+    flex: 1;
+    padding: 1.5rem;
+    color: var(--ink); /* on --paper */
+    overflow-y: auto;
+  }
+
+  /* Force the legacy tool React markup back to readable colours when it
+     lives on the warm-paper canvas zone. */
+  .canvas-zone .tool-body :global(*) {
+    --color-fg: #15110d;
+    --color-text-main: #15110d;
+    --color-fg-muted: #5a513f;
+    --color-text-muted: #5a513f;
+    --color-fg-soft: #8a8270;
+    --color-bg: #f2eeed;
+    --color-bg-soft: #ffffff;
+    --color-bg-muted: #ebe8de;
+    --color-surface: #ffffff;
+    --color-surface-2: #f2eeed;
+    --color-surface-3: #ebe8de;
+    --color-border: #d4cfbf;
+    --color-prose: #15110d;
+  }
+  .canvas-zone .tool-body :global(.dropzone) {
+    background: #ffffff;
+    border-color: #d4cfbf;
+    color: #5a513f;
+  }
+  .canvas-zone .tool-body :global(.btn-secondary) {
+    color: #15110d;
+    border-color: #d4cfbf;
+  }
+  .canvas-zone .tool-body :global(.btn-secondary):hover {
+    border-color: var(--phosphor);
+    color: #15110d;
+  }
+  .canvas-zone .tool-body :global(.input) {
+    background: #ffffff;
+    color: #15110d;
+    border-color: #d4cfbf;
+  }
+  .canvas-zone .tool-body :global(.tool-card) {
+    background: #ffffff;
+    border-color: #d4cfbf;
+    color: #15110d;
+  }
+
+  .canvas-histogram {
+    display: block;
+    width: 100%;
+    height: 96px;
+    background: var(--ink);
+    border-top: 1px solid var(--line);
+  }
+
+  .prose-block {
+    padding: 2.5rem 24px;
+    background: var(--ink);
+    border-top: 1px solid var(--line);
+  }
+  .block-h {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 1.125rem;
+    color: var(--fg);
+    margin: 0 0 1rem;
+    letter-spacing: -0.005em;
+  }
+  .faq {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.375rem;
+  }
+  .faq details {
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    background: var(--ink-2);
+  }
+  .faq summary {
+    cursor: pointer;
+    padding: 0.875rem 1rem;
+    color: var(--fg);
+    font-weight: 500;
+    list-style: none;
+  }
+  .faq summary::-webkit-details-marker {
+    display: none;
+  }
+  .faq details[open] summary {
+    border-bottom: 1px solid var(--line);
+    color: var(--phosphor);
+  }
+  .faq p {
+    margin: 0;
+    padding: 0.875rem 1rem;
+    color: var(--fg-mute);
+    line-height: 1.6;
+  }
+
+  .related {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 0.625rem;
+  }
+  .related a {
+    display: flex;
+    flex-direction: column;
+    gap: 0.125rem;
+    padding: 0.875rem 1rem;
+    background: var(--ink-2);
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    color: var(--fg);
+    text-decoration: none;
+    transition: border-color 120ms ease;
+  }
+  .related a:hover {
+    border-color: var(--phosphor);
+  }
+  .rel-name {
+    font-family: var(--font-display);
+    font-weight: 500;
+    font-size: 14px;
+  }
+  .rel-desc {
+    font-family: var(--font-sans);
+    font-size: 12px;
+    color: var(--fg-mute);
+    line-height: 1.4;
+  }
+</style>

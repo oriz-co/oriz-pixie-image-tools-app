@@ -1,18 +1,21 @@
 ---
 import BaseLayout from '~/layouts/BaseLayout.astro'
-import { FinishSignIn } from '@chirag127/oriz-ui'
+import FinishSignIn from '~/components/FinishSignIn'
 ---
 
 <BaseLayout
-  title="Finishing sign-in — Image Tools"
+  title="Finishing sign-in — image-tools"
   description="Completing email-link sign-in."
   noindex={true}
 >
-  <section class="container-prose finish">
+  <section class="spine finish">
     <FinishSignIn client:load />
   </section>
 </BaseLayout>
 
 <style>
-  .finish { padding-block: 5rem 4rem; text-align: center; }
+  .finish {
+    padding-block: 5rem 4rem;
+    text-align: center;
+  }
 </style>

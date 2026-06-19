@@ -1,16 +1,25 @@
 ---
-/**
- * BaseLayout — every page on image.oriz.in extends this. Pulls the oriz-ui
- * design tokens via global.css, pre-paints the theme + accent from
- * localStorage, mounts a sticky Header + a left SiteSidebar (collapsible on
- * mobile) + a Footer, and conditionally injects the AdSense, GA4, and
- * Cloudflare Web Analytics scripts.
+/*
+ * BaseLayout — single page shell for image.oriz.in v2.
+ *
+ * Two-zone layout:
+ *   - Header (56px, no nav, no sidebar — see ./Header.astro)
+ *   - <main> slot
+ *   - Footer (32px filmstrip strip — see ./Footer.astro)
+ *
+ * NO oriz-ui Sidebar (the v2 brief drops the left rail entirely; the home
+ * page contact-sheet IS the navigation, and tool pages have a back-breadcrumb).
+ * NO theme picker, NO accent picker — the darkroom palette is fixed.
+ *
+ * Auth & contact islands are mounted on individual pages as needed (see
+ * /account.astro, /contact.astro). They render unstyled markup with
+ * data-oriz-* hooks; src/styles/oriz-ui-overrides.css paints them in the
+ * phosphor palette.
  */
 import '~/styles/global.css'
-import preflight from '~/lib/preflight.js?raw'
-import Header from '~/components/Header.astro'
+import '~/styles/oriz-ui-overrides.css'
 import Footer from '~/components/Footer.astro'
-import SiteSidebar from '~/components/SiteSidebar.astro'
+import Header from '~/components/Header.astro'
 import { SITE_CONFIG } from '~/lib/siteConfig'
 
 interface Props {
@@ -19,8 +28,11 @@ interface Props {
   canonical?: string
   noindex?: boolean
   jsonLd?: Record<string, unknown> | Record<string, unknown>[]
-  /** Hide the left sidebar (default false). Useful for landing-style pages. */
-  hideSidebar?: boolean
+  /** Tool pages render the `[ ← all tools ]` breadcrumb instead of the ⌘K chip. */
+  isToolPage?: boolean
+  /** When true, suppress the chrome footer. Used by tool layouts that mount
+   *  their own filmstrip-status row beneath a histogram strip. */
+  bareFooter?: boolean
 }
 
 const {
@@ -29,7 +41,8 @@ const {
   canonical = `${SITE_CONFIG.origin}${Astro.url.pathname}`,
   noindex = false,
   jsonLd,
-  hideSidebar = false,
+  isToolPage = false,
+  bareFooter = false,
 } = Astro.props
 
 const adsenseClient = import.meta.env.PUBLIC_ADSENSE_CLIENT
@@ -38,7 +51,7 @@ const ga4Id = import.meta.env.PUBLIC_GA4_ID
 ---
 
 <!doctype html>
-<html lang="en" data-theme="dark" data-accent="amber">
+<html lang="en">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -54,89 +67,74 @@ const ga4Id = import.meta.env.PUBLIC_GA4_ID
     <meta property="og:site_name" content={SITE_CONFIG.name} />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:site" content="@chirag127" />
+    <meta name="theme-color" content="#0E1116" />
 
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+    {/*
+      Type stack — Space Grotesk display + Inter body + JetBrains Mono numerals.
+      Per design-briefs/oriz-image-tools.md §2 — Space Grotesk is the only
+      Space Grotesk site in the family. Mono carries EXIF, hex, dimensions.
+    */}
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:ital,wght@0,400;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;500&display=swap"
       rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap"
     />
 
-    <script is:inline set:html={preflight} />
+    {
+      jsonLd && (
+        <script
+          is:inline
+          type="application/ld+json"
+          set:html={JSON.stringify(Array.isArray(jsonLd) ? jsonLd : [jsonLd])}
+        />
+      )
+    }
 
-    {jsonLd && (
-      <script
-        is:inline
-        type="application/ld+json"
-        set:html={JSON.stringify(Array.isArray(jsonLd) ? jsonLd : [jsonLd])}
-      />
-    )}
-
-    {adsenseClient && (
-      <script
-        is:inline
-        async
-        src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${adsenseClient}`}
-        crossorigin="anonymous"
-      />
-    )}
-
-    {beaconToken && (
-      <script
-        is:inline
-        defer
-        src="https://static.cloudflareinsights.com/beacon.min.js"
-        data-cf-beacon={`{"token": "${beaconToken}"}`}
-      />
-    )}
-
-    {ga4Id && (
-      <>
+    {
+      adsenseClient && (
         <script
           is:inline
           async
-          src={`https://www.googletagmanager.com/gtag/js?id=${ga4Id}`}
+          src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${adsenseClient}`}
+          crossorigin="anonymous"
         />
+      )
+    }
+
+    {
+      beaconToken && (
         <script
           is:inline
-          set:html={`window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag('js',new Date());gtag('config','${ga4Id}');`}
+          defer
+          src="https://static.cloudflareinsights.com/beacon.min.js"
+          data-cf-beacon={`{"token": "${beaconToken}"}`}
         />
-      </>
-    )}
+      )
+    }
+
+    {
+      ga4Id && (
+        <>
+          <script
+            is:inline
+            async
+            src={`https://www.googletagmanager.com/gtag/js?id=${ga4Id}`}
+          />
+          <script
+            is:inline
+            set:html={`window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag('js',new Date());gtag('config','${ga4Id}');`}
+          />
+        </>
+      )
+    }
   </head>
   <body>
     <a href="#main" class="skip-link">Skip to content</a>
-    <Header />
-    <div class={`page-shell ${hideSidebar ? 'no-sidebar' : ''}`}>
-      {!hideSidebar && <SiteSidebar />}
-      <main id="main"><slot /></main>
-    </div>
-    <Footer />
-
-    <style is:global>
-      .skip-link {
-        position: absolute;
-        left: -9999px;
-        top: 0;
-        background: var(--color-accent);
-        color: var(--color-accent-fg);
-        padding: 0.5rem 1rem;
-        z-index: 100;
-        border-radius: 0 0 0.5rem 0;
-      }
-      .skip-link:focus { left: 0; }
-
-      .page-shell { display: block; }
-      @media (min-width: 1024px) {
-        .page-shell:not(.no-sidebar) {
-          display: grid;
-          grid-template-columns: 240px minmax(0, 1fr);
-          gap: 0;
-          align-items: start;
-        }
-        .page-shell:not(.no-sidebar) > main { min-width: 0; }
-      }
-    </style>
+    <Header isToolPage={isToolPage} />
+    <main id="main"><slot /></main>
+    {!bareFooter && <Footer />}
   </body>
 </html>

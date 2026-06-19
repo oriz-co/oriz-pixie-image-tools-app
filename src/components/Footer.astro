@@ -1,96 +1,124 @@
 ---
-import { FAMILY_SITES } from '@chirag127/oriz-ui'
-import { SITE_CONFIG } from '~/lib/siteConfig'
+/*
+ * Footer — filmstrip status line. Per design-briefs/oriz-image-tools.md §7:
+ *
+ *   ●●●  13 tools  ·  0 bytes uploaded  ·  runs in your browser  ·  MIT  ·  GitHub  ·  v0.4.1
+ *
+ * Single row, mono 12px, 32px tall, --ink background. The three leading dots
+ * are NOT text characters — they are an inline 48×16 SVG with three vertical
+ * bars in --rgb-r / --rgb-g / --rgb-b that pulse at 30fps in sync with the
+ * canvas histogram (see <RGBHistogram footer />).
+ *
+ * Link targets are underlined on hover only with a phosphor underline.
+ */
+import { tools } from '~/lib/toolMeta'
 
-const year = new Date().getFullYear()
+const toolCount = tools.length
+const version = '0.4.1'
 ---
 
-<footer class="site-footer">
-  <div class="container-page footer-inner">
-    <div class="footer-col">
-      <p class="footer-brand">{SITE_CONFIG.name}</p>
-      <p class="footer-tag">
-        Compress, convert, resize — everything runs in your browser. Part of the
-        <a href="https://oriz.in">oriz family</a> by Chirag Singhal.
-      </p>
-    </div>
-
-    <div class="footer-col">
-      <h2 class="footer-h">Family</h2>
-      <ul class="footer-links">
-        {FAMILY_SITES.map((s) => (
-          <li><a href={s.url}>{s.name}</a></li>
-        ))}
-      </ul>
-    </div>
-
-    <div class="footer-col">
-      <h2 class="footer-h">Site</h2>
-      <ul class="footer-links">
-        <li><a href="/tools/">All tools</a></li>
-        <li><a href="/blog/">Blog</a></li>
-        <li><a href="/about/">About</a></li>
-        <li><a href="/contact/">Contact</a></li>
-        <li><a href="/account/">Account</a></li>
-      </ul>
-    </div>
-
-    <div class="footer-col">
-      <h2 class="footer-h">Legal</h2>
-      <ul class="footer-links">
-        <li><a href="/legal/privacy/">Privacy</a></li>
-        <li><a href="/legal/terms/">Terms</a></li>
-        <li><a href="/legal/disclaimer/">Disclaimer</a></li>
-        <li><a href="/legal/cookies/">Cookies</a></li>
-        <li><a href="/legal/grievance/">Grievance officer</a></li>
-      </ul>
-    </div>
-  </div>
-
-  <div class="container-page footer-bottom">
-    <p>&copy; {year} Chirag Singhal. Built with <a href="https://github.com/chirag127/oriz">oriz</a>.</p>
+<footer class="fttr">
+  <div class="strip mono">
+    <span class="dots" aria-hidden="true" data-footer-strip>
+      <svg viewBox="0 0 48 16" width="48" height="16" preserveAspectRatio="none">
+        <rect class="bar bar-r" x="6" y="2" width="4" height="12" fill="var(--rgb-r)" />
+        <rect class="bar bar-g" x="22" y="4" width="4" height="10" fill="var(--rgb-g)" />
+        <rect class="bar bar-b" x="38" y="6" width="4" height="8" fill="var(--rgb-b)" />
+      </svg>
+    </span>
+    <span class="seg">{toolCount} tools</span>
+    <span class="sep" aria-hidden="true">·</span>
+    <span class="seg">0 bytes uploaded</span>
+    <span class="sep" aria-hidden="true">·</span>
+    <span class="seg">runs in your browser</span>
+    <span class="sep" aria-hidden="true">·</span>
+    <a class="seg lnk" href="https://github.com/chirag127/oriz-image-tools/blob/main/LICENSE">MIT</a>
+    <span class="sep" aria-hidden="true">·</span>
+    <a class="seg lnk" href="https://github.com/chirag127/oriz-image-tools">GitHub</a>
+    <span class="sep" aria-hidden="true">·</span>
+    <span class="seg">v{version}</span>
   </div>
 </footer>
 
 <style>
-  .site-footer {
-    margin-top: 6rem;
-    padding-block: 3rem 1.5rem;
-    border-top: 1px solid var(--color-border);
-    background: var(--color-bg-soft);
+  .fttr {
+    height: 32px;
+    background: var(--ink);
+    /* Hairline above only — keeps the strip sealed against the dark surface */
+    border-top: 1px solid var(--line);
+    overflow: hidden;
   }
-  .footer-inner {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 2rem;
+  .strip {
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+    height: 100%;
+    padding: 0 24px;
+    color: color-mix(in oklab, var(--paper) 60%, var(--ink));
+    font-family: var(--font-mono);
+    font-size: 12px;
+    font-feature-settings: 'tnum' 1, 'zero' 1, 'calt' 0;
+    white-space: nowrap;
+    overflow-x: auto;
   }
-  @media (min-width: 640px) { .footer-inner { grid-template-columns: repeat(2, 1fr); } }
-  @media (min-width: 1024px) { .footer-inner { grid-template-columns: 2fr 1fr 1fr 1fr; } }
-  .footer-brand {
-    font-family: var(--font-serif);
-    font-size: 1.5rem;
-    font-weight: 600;
-    margin: 0 0 0.5rem;
+  .strip::-webkit-scrollbar {
+    display: none;
   }
-  .footer-tag { color: var(--color-fg-muted); margin: 0; max-width: 36ch; }
-  .footer-tag a { color: var(--color-fg-muted); }
-  .footer-tag a:hover { color: var(--color-accent); }
-  .footer-h {
-    font-size: 0.75rem;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    color: var(--color-fg-muted);
-    margin: 0 0 0.75rem;
+  .dots {
+    display: inline-flex;
+    align-items: center;
+    margin-right: 0.25rem;
   }
-  .footer-links { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 0.5rem; }
-  .footer-links a { color: var(--color-fg-muted); text-decoration: none; font-size: 0.9375rem; }
-  .footer-links a:hover { color: var(--color-fg); }
-  .footer-bottom {
-    margin-top: 2.5rem;
-    padding-top: 1.5rem;
-    border-top: 1px solid var(--color-border);
-    color: var(--color-fg-soft);
-    font-size: 0.8125rem;
+  .dots svg {
+    display: block;
   }
-  .footer-bottom p { margin: 0; }
+  .dots .bar {
+    transform-box: fill-box;
+    transform-origin: bottom center;
+    animation: pulseBar 2.4s ease-in-out infinite;
+  }
+  .dots .bar-g {
+    animation-delay: 0.4s;
+  }
+  .dots .bar-b {
+    animation-delay: 0.8s;
+  }
+  @keyframes pulseBar {
+    0%,
+    100% {
+      transform: scaleY(0.45);
+      opacity: 0.65;
+    }
+    50% {
+      transform: scaleY(1);
+      opacity: 1;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .dots .bar {
+      animation: none;
+      opacity: 0.85;
+    }
+  }
+  .seg {
+    color: color-mix(in oklab, var(--paper) 60%, var(--ink));
+  }
+  .sep {
+    color: color-mix(in oklab, var(--paper) 30%, var(--ink));
+  }
+  .lnk {
+    text-decoration: none;
+    color: color-mix(in oklab, var(--paper) 60%, var(--ink));
+  }
+  .lnk:hover {
+    color: var(--paper);
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 3px;
+    text-decoration-color: var(--phosphor);
+  }
+  .lnk:focus-visible {
+    outline: 2px solid var(--phosphor);
+    outline-offset: 2px;
+  }
 </style>

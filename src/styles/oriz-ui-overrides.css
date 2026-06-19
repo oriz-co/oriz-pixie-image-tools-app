@@ -1,0 +1,341 @@
+/*
+ * oriz-ui overrides — site-local styling for the AccountPanel /
+ * FinishSignIn / ContactForm islands. Same selector hooks as the family
+ * anchor (oriz-home), repainted in darkroom + phosphor.
+ *
+ * Selector hook contracts:
+ *   packages/auth-ui/src/AccountPanel.tsx   (data-oriz-account-*)
+ *   packages/auth-ui/src/FinishSignIn.tsx   (data-oriz-finish-sign-in-*)
+ *   packages/contact-form/src/ContactForm.tsx (data-oriz-contact-*)
+ */
+
+/* ── AccountPanel ───────────────────────────────────────────────────────── */
+
+[data-oriz-account] {
+  display: block;
+  margin-block: 2rem;
+  padding: 1.75rem;
+  background: var(--ink-2);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  font-family: var(--font-sans);
+  color: var(--fg);
+}
+
+[data-oriz-account-state="loading"] {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  padding-block: 2.5rem;
+}
+
+[data-oriz-account-spinner] {
+  display: inline-block;
+  font-size: 1.25rem;
+  color: var(--fg-mute);
+  animation: oriz-spin 1.2s linear infinite;
+}
+
+[data-oriz-account-heading] {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 1.5rem;
+  margin: 0 0 1.25rem;
+  color: var(--fg);
+}
+
+[data-oriz-account-providers] {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+[data-oriz-account-provider] {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.625rem;
+  width: 100%;
+  height: 44px;
+  padding-inline: 1rem;
+  background: transparent;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  color: var(--fg);
+  font-family: inherit;
+  font-size: 0.9375rem;
+  cursor: pointer;
+}
+[data-oriz-account-provider]:hover:not(:disabled) {
+  border-color: var(--phosphor);
+  color: var(--phosphor);
+}
+[data-oriz-account-provider]:focus-visible {
+  outline: 2px solid var(--phosphor);
+  outline-offset: 2px;
+}
+[data-oriz-account-provider]:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+[data-oriz-account-provider="email"] {
+  background: var(--phosphor);
+  color: var(--phosphor-ink);
+  border-color: var(--phosphor);
+  font-weight: 500;
+}
+[data-oriz-account-provider="email"]:hover:not(:disabled) {
+  filter: brightness(1.06);
+  color: var(--phosphor-ink);
+  border-color: var(--phosphor);
+}
+
+[data-oriz-account-separator] {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-block: 1.5rem;
+  color: var(--fg-mute);
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+}
+[data-oriz-account-separator]::before,
+[data-oriz-account-separator]::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: var(--line);
+}
+
+[data-oriz-account-email-form] {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+[data-oriz-account-email-form] input[type="email"] {
+  flex: 1;
+  min-width: 200px;
+  height: 44px;
+  padding-inline: 0.875rem;
+  background: var(--ink);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  color: var(--fg);
+  font-family: inherit;
+  font-size: 0.9375rem;
+}
+[data-oriz-account-email-form] input[type="email"]:focus {
+  outline: none;
+  border-color: var(--phosphor);
+}
+
+[data-oriz-account-link-sent] {
+  margin-block: 0.75rem 0;
+  color: var(--fg-mute);
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+
+[data-oriz-account-provider="anon"] {
+  display: block;
+  width: 100%;
+  margin-top: 1rem;
+  padding: 0.5rem;
+  background: transparent;
+  border: 0;
+  color: var(--fg-mute);
+  font-family: inherit;
+  font-size: 0.875rem;
+  text-align: center;
+  text-decoration: underline;
+  text-underline-offset: 0.25em;
+  cursor: pointer;
+}
+[data-oriz-account-provider="anon"]:hover:not(:disabled) {
+  color: var(--phosphor);
+}
+
+[data-oriz-account-me] {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+}
+[data-oriz-account-avatar] {
+  width: 56px;
+  height: 56px;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+}
+[data-oriz-account-name] {
+  margin: 0;
+  font-weight: 600;
+  font-size: 1.0625rem;
+  color: var(--fg);
+}
+[data-oriz-account-email] {
+  margin: 0.125rem 0 0;
+  color: var(--fg-mute);
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+}
+
+[data-oriz-account-note] {
+  margin-block: 1rem;
+  color: var(--fg-mute);
+  line-height: 1.55;
+  font-size: 0.9375rem;
+}
+
+[data-oriz-account-action="sign-out"] {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  height: 40px;
+  padding-inline: 1rem;
+  background: transparent;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  color: var(--fg);
+  font-family: inherit;
+  font-size: 0.9375rem;
+  cursor: pointer;
+}
+[data-oriz-account-action="sign-out"]:hover:not(:disabled) {
+  border-color: var(--rgb-r);
+  color: var(--rgb-r);
+}
+
+[data-oriz-account-error] {
+  margin-top: 1rem;
+  padding: 0.75rem 1rem;
+  background: color-mix(in oklab, var(--rgb-r) 15%, transparent);
+  border: 1px solid color-mix(in oklab, var(--rgb-r) 50%, transparent);
+  color: var(--fg);
+  font-size: 0.875rem;
+  border-radius: 4px;
+}
+
+/* ── FinishSignIn ───────────────────────────────────────────────────────── */
+
+[data-oriz-finish-sign-in] {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  margin-block: 4rem;
+  font-family: var(--font-sans);
+  color: var(--fg);
+}
+[data-oriz-finish-sign-in-state="done"] {
+  color: var(--phosphor);
+}
+[data-oriz-finish-sign-in-error] {
+  padding: 0.875rem 1.25rem;
+  background: color-mix(in oklab, var(--rgb-r) 15%, transparent);
+  border: 1px solid color-mix(in oklab, var(--rgb-r) 50%, transparent);
+  color: var(--fg);
+  border-radius: 4px;
+}
+
+/* ── ContactForm ────────────────────────────────────────────────────────── */
+
+form[data-oriz-contact] {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-block: 2rem;
+  font-family: var(--font-sans);
+}
+
+[data-oriz-contact-honeypot] {
+  position: absolute;
+  left: -9999px;
+  opacity: 0;
+}
+
+[data-oriz-contact-field] {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+}
+[data-oriz-contact-field] > span:first-child {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  color: var(--fg-mute);
+  font-weight: 500;
+}
+[data-oriz-contact-field] input,
+[data-oriz-contact-field] textarea {
+  padding: 0.625rem 0.875rem;
+  background: var(--ink-2);
+  border: 1px solid var(--line);
+  color: var(--fg);
+  font-family: inherit;
+  font-size: 1rem;
+  border-radius: 4px;
+}
+[data-oriz-contact-field] input:focus,
+[data-oriz-contact-field] textarea:focus {
+  outline: none;
+  border-color: var(--phosphor);
+}
+[data-oriz-contact-field] textarea {
+  resize: vertical;
+  min-height: 120px;
+}
+
+[data-oriz-contact-error] {
+  color: var(--rgb-r);
+  font-size: 0.8125rem;
+  margin: 0;
+}
+
+[data-oriz-contact-submit] {
+  align-self: flex-start;
+  height: 44px;
+  padding-inline: 1.5rem;
+  background: var(--phosphor);
+  color: var(--phosphor-ink);
+  border: 1px solid var(--phosphor);
+  border-radius: 4px;
+  font-family: inherit;
+  font-size: 0.9375rem;
+  font-weight: 500;
+  cursor: pointer;
+}
+[data-oriz-contact-submit]:hover:not(:disabled) {
+  filter: brightness(1.06);
+}
+[data-oriz-contact-submit]:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+[data-oriz-contact-success] {
+  margin-top: 0.75rem;
+  padding: 0.75rem 1rem;
+  background: color-mix(in oklab, var(--rgb-g) 18%, transparent);
+  border: 1px solid color-mix(in oklab, var(--rgb-g) 60%, transparent);
+  color: var(--fg);
+  font-size: 0.9375rem;
+  border-radius: 4px;
+}
+
+@keyframes oriz-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-oriz-account-spinner] {
+    animation: none;
+  }
+}

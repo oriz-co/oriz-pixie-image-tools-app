@@ -1,9 +1,8 @@
 ---
-/**
- * Legacy `Base.astro` — kept as a thin shim that forwards into BaseLayout so
- * the existing tool, blog, about, contact, privacy, terms, and tools/index
- * pages don't all need to be rewritten. New pages should import BaseLayout
- * directly.
+/*
+ * Legacy Base.astro shim — forwards to BaseLayout. Kept so the old
+ * tools/index, blog, privacy, and terms pages don't all need rewriting.
+ * New pages should import BaseLayout directly.
  */
 import BaseLayout from '~/layouts/BaseLayout.astro'
 
@@ -11,11 +10,19 @@ interface Props {
   title: string
   description: string
   canonical?: string
+  noindex?: boolean
+  isToolPage?: boolean
 }
 
-const { title, description, canonical } = Astro.props
+const { title, description, canonical, noindex, isToolPage } = Astro.props
 ---
 
-<BaseLayout title={title} description={description} canonical={canonical}>
+<BaseLayout
+  title={title}
+  description={description}
+  canonical={canonical}
+  noindex={noindex}
+  isToolPage={isToolPage}
+>
   <slot />
 </BaseLayout>

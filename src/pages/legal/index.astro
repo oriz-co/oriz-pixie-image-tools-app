@@ -11,19 +11,19 @@ const sections = [
 ---
 
 <BaseLayout title="Legal — Image Tools" description="Privacy, terms, and grievance contact for image.oriz.in.">
-  <header class="container-prose page-head">
+  <header class="spine page-head">
     <p class="eyebrow"><a href="/">Image Tools</a> / Legal</p>
     <h1>Legal</h1>
   </header>
 
-  <section class="container-prose section">
+  <section class="spine section">
     <ul class="legal-list">
       {sections.map((s) => (
         <li>
           <a href={`/legal/${s.slug}/`} class="card">
             <h2>{s.label}</h2>
             <p>{s.desc}</p>
-            <span class="arrow" aria-hidden="true">→</span>
+            <span class="arrow mono" aria-hidden="true">→</span>
           </a>
         </li>
       ))}
@@ -32,23 +32,51 @@ const sections = [
 </BaseLayout>
 
 <style>
-  .page-head { padding-block: 3rem 1.5rem; border-bottom: 1px solid var(--color-border); }
-  .eyebrow { color: var(--color-fg-muted); font-size: 0.8125rem; margin: 0 0 0.5rem; }
-  .eyebrow a { color: var(--color-fg-muted); text-decoration: none; }
-  h1 { font-family: var(--font-serif); font-size: clamp(2rem, 4vw, 2.75rem); font-weight: 600; letter-spacing: -0.02em; margin: 0; }
   .section { padding-block: 2.5rem 4rem; }
-  .legal-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 0.625rem; }
-  .card {
-    display: grid; grid-template-columns: 1fr auto; gap: 1rem; align-items: center;
-    padding: 1.25rem 1.5rem;
-    background: var(--color-bg-soft);
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-card);
-    color: var(--color-fg); text-decoration: none;
+  .legal-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+    background: var(--line);
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    overflow: hidden;
   }
-  .card:hover { border-color: color-mix(in oklab, var(--color-accent) 50%, var(--color-border)); color: var(--color-fg); }
-  .card h2 { font-family: var(--font-serif); font-size: 1.125rem; font-weight: 600; margin: 0 0 0.25rem; }
-  .card p { color: var(--color-fg-muted); margin: 0; font-size: 0.9375rem; }
-  .arrow { color: var(--color-fg-soft); font-size: 1.125rem; }
-  .card:hover .arrow { color: var(--color-accent); }
+  .card {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 1rem;
+    align-items: center;
+    padding: 1rem 1.25rem;
+    background: var(--ink-2);
+    color: var(--fg);
+    text-decoration: none;
+    transition: background 120ms ease;
+  }
+  .card:hover {
+    background: color-mix(in oklab, var(--phosphor) 8%, var(--ink-2));
+  }
+  .card h2 {
+    font-family: var(--font-display);
+    font-size: 1rem;
+    font-weight: 600;
+    margin: 0 0 0.125rem;
+    color: var(--fg);
+  }
+  .card p {
+    color: var(--fg-mute);
+    margin: 0;
+    font-size: 0.875rem;
+  }
+  .arrow {
+    color: var(--fg-soft);
+    font-size: 1rem;
+  }
+  .card:hover .arrow {
+    color: var(--phosphor);
+  }
 </style>
+

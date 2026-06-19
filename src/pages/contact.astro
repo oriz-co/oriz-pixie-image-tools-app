@@ -6,22 +6,26 @@ const web3formsKey = import.meta.env.PUBLIC_WEB3FORMS_KEY ?? ''
 ---
 
 <BaseLayout
-  title="Contact — Image Tools"
+  title="Contact — image-tools"
   description="Bug reports, feature requests, or anything else about image.oriz.in."
 >
-  <header class="container-prose page-head">
-    <p class="eyebrow"><a href="/">Image Tools</a> / Contact</p>
+  <header class="spine page-head">
+    <p class="eyebrow"><a href="/">image-tools</a> / contact</p>
     <h1>Contact</h1>
     <p class="lede">
-      Bug, feature request, or feedback about a tool? The fastest way to reach
-      me is email: <a href="mailto:whyiswhen@gmail.com"><strong>whyiswhen@gmail.com</strong></a>.
+      Bug, feature request, or feedback about a tool? The fastest way is email:
+      <a href="mailto:whyiswhen@gmail.com"><strong>whyiswhen@gmail.com</strong></a>.
       For tracked issues, open one on
       <a href="https://github.com/chirag127/oriz-image-tools/issues">GitHub</a>.
     </p>
   </header>
 
-  <section class="container-prose">
-    <ContactForm client:load web3formsKey={web3formsKey} fromName="Image Tools contact form" />
+  <section class="spine">
+    <ContactForm
+      client:load
+      web3formsKey={web3formsKey}
+      fromName="Image Tools contact form"
+    />
 
     <p class="meta">
       For privacy questions or DMCA notices, see the
@@ -31,10 +35,16 @@ const web3formsKey = import.meta.env.PUBLIC_WEB3FORMS_KEY ?? ''
 </BaseLayout>
 
 <style>
-  .page-head { padding-block: 3rem 1.5rem; border-bottom: 1px solid var(--color-border); }
-  .eyebrow { color: var(--color-fg-muted); font-size: 0.8125rem; margin: 0 0 0.5rem; }
-  .eyebrow a { color: var(--color-fg-muted); text-decoration: none; }
-  h1 { font-family: var(--font-serif); font-size: clamp(2rem, 4vw, 2.75rem); font-weight: 600; letter-spacing: -0.02em; margin: 0; }
-  .lede { color: var(--color-fg-muted); margin: 0.75rem 0 0; font-size: 1.0625rem; max-width: 56ch; }
-  .meta { font-size: 0.875rem; color: var(--color-fg-muted); margin-top: 2rem; padding-block: 2rem; }
+  .meta {
+    font-size: 0.875rem;
+    color: var(--fg-mute);
+    margin-top: 2rem;
+    padding-block: 2rem;
+  }
+  .meta a {
+    color: var(--phosphor);
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 3px;
+  }
 </style>

@@ -3,50 +3,50 @@ import BaseLayout from '~/layouts/BaseLayout.astro'
 ---
 
 <BaseLayout
-  title="About — Image Tools"
+  title="About — image-tools"
   description="Why image.oriz.in exists and how it works under the hood."
 >
-  <header class="container-prose page-head">
-    <p class="eyebrow"><a href="/">Image Tools</a> / About</p>
-    <h1>About Image Tools</h1>
+  <header class="spine page-head">
+    <p class="eyebrow"><a href="/">image-tools</a> / about</p>
+    <h1>About</h1>
   </header>
 
-  <article class="container-prose prose">
+  <article class="spine prose">
     <p class="lede">
-      <strong>image.oriz.in</strong> is a free collection of image-processing
-      tools that run entirely in your browser. No uploads, no servers handling
+      <strong>image.oriz.in</strong> is a browser darkroom — 13 image-processing
+      tools that run entirely on your device. No uploads, no servers handling
       your photos, no tracking pixels embedded in the output.
     </p>
 
-    <h2>Why this exists</h2>
+    <h2>Why it exists</h2>
     <p>
-      Most "free" image tools online upload your photos to a server, run
-      whatever processing they offer, and email you (or worse, train models on
-      what you sent). That's a privacy tradeoff we don't need anymore — modern
-      browsers can do almost all of this work locally with WebAssembly,
-      Canvas APIs, and ONNX runtimes.
+      Most "free" image tools online upload your photos to a server, run whatever
+      processing they offer, and email you (or worse, train models on what you
+      sent). That tradeoff is unnecessary now — modern browsers can do almost all
+      of this work locally with WebAssembly, Canvas APIs, and ONNX runtimes.
     </p>
 
     <h2>How it works</h2>
     <ul>
       <li>
-        <strong>Compression</strong> — <code>browser-image-compression</code>
-        with native Canvas encoding for JPG/PNG/WebP.
+        <strong>Compression</strong> — <code>browser-image-compression</code> with
+        native Canvas encoding for JPG/PNG/WebP.
       </li>
       <li>
         <strong>Format conversion</strong> — <code>heic2any</code> for HEIC,
-        Canvas for everything else.
+        Canvas for the rest.
       </li>
       <li>
-        <strong>Background removal</strong> — <code>@imgly/background-removal</code>
-        running an ONNX model in a Web Worker.
+        <strong>Background removal</strong> —
+        <code>@imgly/background-removal</code> running an ONNX model in a Web
+        Worker.
       </li>
       <li>
         <strong>AI upscaling</strong> — Real-ESRGAN ONNX models, browser-side.
       </li>
       <li>
-        <strong>Face blur</strong> — <code>face-api.js</code> with TinyFaceDetector,
-        purely client-side.
+        <strong>Face blur</strong> — <code>face-api.js</code> with
+        TinyFaceDetector, purely client-side.
       </li>
       <li>
         <strong>Photo editor</strong> — <code>fabric.js</code> for the canvas
@@ -54,12 +54,20 @@ import BaseLayout from '~/layouts/BaseLayout.astro'
       </li>
     </ul>
 
+    <h2>The histogram is the brand</h2>
+    <p>
+      The strip below the canvas on every tool page is a live RGB histogram. It
+      reads pixels from your working bitmap, downsamples to ≤512² in an
+      OffscreenCanvas, walks the pixel data, and re-renders three filled SVG
+      paths at ~30fps. The home page pulses on a synthetic curve until your
+      first transform.
+    </p>
+
     <h2>Part of the oriz family</h2>
     <p>
-      Image Tools is one of ten sites under <a href="https://oriz.in">oriz.in</a> —
-      a personal family of static sites by Chirag Singhal. One sign-in (optional)
-      works across every site. See the rest at
-      <a href="https://oriz.in">oriz.in</a>.
+      Image Tools is one of eleven sites under
+      <a href="https://oriz.in">oriz.in</a> — a personal family of static sites
+      by Chirag Singhal. One sign-in (optional) works across every site.
     </p>
 
     <h2>Open source</h2>
@@ -70,18 +78,3 @@ import BaseLayout from '~/layouts/BaseLayout.astro'
     </p>
   </article>
 </BaseLayout>
-
-<style>
-  .page-head { padding-block: 3rem 1.5rem; border-bottom: 1px solid var(--color-border); }
-  .eyebrow { color: var(--color-fg-muted); font-size: 0.8125rem; margin: 0 0 0.5rem; }
-  .eyebrow a { color: var(--color-fg-muted); text-decoration: none; }
-  h1 { font-family: var(--font-serif); font-size: clamp(2rem, 4vw, 2.75rem); font-weight: 600; letter-spacing: -0.02em; margin: 0; }
-  .prose { padding-block: 2.5rem 4rem; color: var(--color-prose); line-height: 1.7; font-size: 1.0625rem; }
-  .prose .lede { font-size: 1.1875rem; color: var(--color-fg); margin: 0 0 1.5rem; }
-  .prose h2 { font-family: var(--font-serif); font-size: 1.375rem; font-weight: 600; color: var(--color-fg); margin: 2rem 0 1rem; }
-  .prose ul { padding-left: 1.5rem; margin: 0 0 1.25rem; }
-  .prose li { margin-bottom: 0.5rem; }
-  .prose p { margin: 0 0 1.25rem; }
-  .prose a { color: var(--color-accent); }
-  .prose code { background: var(--color-bg-muted); padding: 0.125em 0.375em; border-radius: 0.25rem; font-size: 0.875em; }
-</style>

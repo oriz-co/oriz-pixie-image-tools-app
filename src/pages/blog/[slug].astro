@@ -1,193 +1,181 @@
 ---
-import Base from "../../layouts/Base.astro";
+import BaseLayout from '~/layouts/BaseLayout.astro'
 
 export function getStaticPaths() {
   return [
-    { params: { slug: "compress-images-guide" }, props: { 
-      title: "How to Compress Images Without Losing Quality",
-      date: "March 27, 2026",
-      readTime: "6 min read"
-    }},
-    { params: { slug: "best-image-resizers-2026" }, props: { 
-      title: "Best Free Online Image Resizers in 2026",
-      date: "March 27, 2026",
-      readTime: "5 min read"
-    }},
-    { params: { slug: "remove-background-free" }, props: { 
-      title: "How to Remove Image Backgrounds for Free",
-      date: "March 27, 2026",
-      readTime: "5 min read"
-    }},
-    { params: { slug: "heic-to-jpg-guide" }, props: { 
-      title: "Convert HEIC to JPG Online: Step-by-Step Guide",
-      date: "March 27, 2026",
-      readTime: "4 min read"
-    }},
-    { params: { slug: "image-upscaling-explained" }, props: { 
-      title: "What is Image Upscaling? AI Explained Simply",
-      date: "March 27, 2026",
-      readTime: "5 min read"
-    }},
-  ];
+    {
+      params: { slug: 'compress-images-guide' },
+      props: {
+        title: 'How to compress images without losing quality',
+        date: '2026-03-27',
+        readTime: '6 min',
+      },
+    },
+    {
+      params: { slug: 'best-image-resizers-2026' },
+      props: {
+        title: 'Best free image resizers in 2026',
+        date: '2026-03-27',
+        readTime: '5 min',
+      },
+    },
+    {
+      params: { slug: 'remove-background-free' },
+      props: {
+        title: 'How to remove image backgrounds for free',
+        date: '2026-03-27',
+        readTime: '5 min',
+      },
+    },
+    {
+      params: { slug: 'heic-to-jpg-guide' },
+      props: {
+        title: 'Convert HEIC to JPG — step by step',
+        date: '2026-03-27',
+        readTime: '4 min',
+      },
+    },
+    {
+      params: { slug: 'image-upscaling-explained' },
+      props: {
+        title: 'What is image upscaling? AI explained simply',
+        date: '2026-03-27',
+        readTime: '5 min',
+      },
+    },
+  ]
 }
 
-const { title, date, readTime } = Astro.props;
-const { slug } = Astro.params;
+const { title, date, readTime } = Astro.props
+const { slug } = Astro.params
 
 const content: Record<string, string> = {
-  "compress-images-guide": `
-    <h2>Understanding Image Compression</h2>
-    <p>Image compression is the art of reducing file size while maintaining visual quality. Whether you're optimizing website images, preparing photos for email, or creating social media posts, understanding compression helps you balance quality with performance.</p>
-
-    <h2>Lossy vs. Lossless Compression</h2>
-    <p>There are two main types of compression:</p>
+  'compress-images-guide': `
+    <h2>Lossy vs lossless</h2>
+    <p>JPG is lossy — it discards data the human eye is bad at noticing. PNG is lossless — every pixel is preserved, but files are larger. WebP and AVIF do both, with better compression than JPG at equal quality.</p>
+    <h2>The right quality setting for the web</h2>
+    <p>For photos: 70–80% JPG quality is the sweet spot. Below 60% you'll see blocking on flat regions; above 90% you're paying for bytes nobody can see.</p>
+    <h2>Resize first, compress second</h2>
+    <p>A 4000px image displayed at 800px wastes 95% of its pixels. Always resize to the actual rendered size before compressing — the savings are far bigger than any quality knob.</p>
+    <h2>Modern formats</h2>
+    <p>WebP saves 25–35% over JPG. AVIF saves another 20%. Both are supported in every current browser. Use them where you control the delivery (your own site); fall back to JPG/PNG when uploading to platforms that don't accept them.</p>
+  `,
+  'best-image-resizers-2026': `
+    <h2>What "best" means here</h2>
+    <p>Privacy-first, browser-only, no upload limits, no watermarks. Anything that uploads your photos to a server is automatically out.</p>
+    <h2>Common sizes for 2026</h2>
     <ul>
-      <li><strong>Lossy compression</strong> (JPG, WebP) removes some image data to achieve smaller files. Higher quality settings = larger files but better preservation.</li>
-      <li><strong>Lossless compression</strong> (PNG, GIF) preserves all original data. Files stay larger but image quality is identical to the original.</li>
+      <li>Web hero — 1920×1080 or 1200×630</li>
+      <li>Instagram square — 1080×1080</li>
+      <li>Twitter / Facebook landscape — 1200×630</li>
+      <li>Stories / Reels — 1080×1920</li>
+      <li>YouTube thumbnail — 1280×720</li>
     </ul>
-
-    <h2>When to Use Each Format</h2>
-    <p><strong>Use JPG for:</strong> Photographs, complex images with many colors, web images where file size matters most.</p>
-    <p><strong>Use PNG for:</strong> Screenshots, images with text, graphics with transparency, images requiring perfect quality.</p>
-
-    <h2>Tips for Optimal Compression</h2>
+    <h2>What to look for</h2>
     <ol>
-      <li><strong>Choose the right quality setting</strong> - For web, 70-80% is usually optimal. At 80%, most people can't see quality loss.</li>
-      <li><strong>Resize before compressing</strong> - A 4000px image compressed to 80% is wasteful if displayed at 800px.</li>
-      <li><strong>Use modern formats</strong> - WebP often achieves 25-35% smaller files than JPG at equal quality.</li>
-      <li><strong>Batch process</strong> - Compress multiple images at once to save time.</li>
+      <li>Aspect-ratio lock — prevents squishing</li>
+      <li>Preset sizes — saves typing common dimensions</li>
+      <li>Batch mode — resize 20 photos with one settings pass</li>
+      <li>Interpolation control — bicubic for photos, nearest-neighbour for pixel art</li>
     </ol>
-
-    <h2>Our Compression Tool</h2>
-    <p>Our free online compressor handles JPG, PNG, GIF, and SVG. Adjust quality from 1-100%, enable lossless for PNG, and process up to 20 images at once. All processing happens in your browser - your images never leave your device.</p>
   `,
-  "best-image-resizers-2026": `
-    <h2>Why Image Resizing Matters</h2>
-    <p>Whether you're preparing images for a website, social media, or print, getting the right dimensions is essential. Different platforms have different requirements, and using the correct size prevents quality loss and improves loading times.</p>
-
-    <h2>Common Image Sizes for 2026</h2>
-    <ul>
-      <li><strong>Website hero</strong>: 1920x1080 or 1200x630 pixels</li>
-      <li><strong>Social media square</strong>: 1080x1080 (Instagram, Facebook)</li>
-      <li><strong>Social media landscape</strong>: 1200x630 (Facebook, LinkedIn)</li>
-      <li><strong>Stories/Reels</strong>: 1080x1920 (9:16 ratio)</li>
-      <li><strong>YouTube thumbnails</strong>: 1280x720</li>
-    </ul>
-
-    <h2>What to Look for in a Resizer</h2>
-    <ol>
-      <li><strong>Aspect ratio preservation</strong> - Prevents distortion by automatically calculating dimensions</li>
-      <li><strong>Preset sizes</strong> - Quick options for common social media dimensions</li>
-      <li><strong>Batch processing</strong> - Resize multiple images at once</li>
-      <li><strong>Quality control</strong> - Options for interpolation quality</li>
-    </ol>
-
-    <h2>Our Resize Tool Features</h2>
-    <p>Our free resizer offers pixel or percentage input, aspect ratio lock, social media presets, and batch processing. All done in-browser with zero upload wait times.</p>
+  'remove-background-free': `
+    <h2>What background removal actually does</h2>
+    <p>It produces a mask that separates subject from background, then composites the subject over a transparent layer. The output is a PNG (or sometimes WebP) with an alpha channel.</p>
+    <h2>How browser-side AI works</h2>
+    <p>An ONNX or TF.js model — usually a U-Net variant trained on millions of foreground/background pairs — runs in a Web Worker. Modern phones can do a 1MP image in 1–2 seconds; a desktop CPU does it in &lt;1.</p>
+    <h2>Trade-offs vs Photoshop</h2>
+    <p>Photoshop's Object Selection is more precise on hard edges (glasses, hair). The browser model is faster, free, and never sees your image. For most product-shot use cases the gap is small.</p>
+    <h2>Avoid the soft-edge halo</h2>
+    <p>Most models leave a 1–2 pixel feather of background around hair. Two fixes: matte against a similar background colour, or set the model's threshold higher and accept slightly tighter cuts.</p>
   `,
-  "remove-background-free": `
-    <h2>What is Background Removal?</h2>
-    <p>Background removal isolates the subject of an image, creating a transparent layer. This is essential for product photography, profile pictures, graphics overlays, and creative projects.</p>
-
-    <h2>How AI Background Removal Works</h2>
-    <p>Modern tools use deep learning models trained on millions of images. These AI models can:</p>
+  'heic-to-jpg-guide': `
+    <h2>What HEIC is</h2>
+    <p>High Efficiency Image Container — Apple's default since iOS 11. It uses HEVC (H.265) compression internally, producing roughly half the file size of JPEG at the same quality.</p>
+    <h2>Why convert</h2>
     <ul>
-      <li>Detect people, objects, and animals</li>
-      <li>Create precise masks around subjects</li>
-      <li>Handle complex edges like hair and fur</li>
-      <li>Work on various image types automatically</li>
+      <li>JPG works on every device and platform; HEIC doesn't</li>
+      <li>Most websites and email clients reject HEIC uploads</li>
+      <li>Older Windows versions need extra codecs to even view HEIC</li>
+      <li>Many image editors don't support HEIC at all</li>
     </ul>
-
-    <h2>Traditional vs. AI Methods</h2>
-    <p><strong>Manual selection</strong> (Photoshop): Precise but time-consuming, requires skill.</p>
-    <p><strong>Magic wand tools</strong>: Fast but struggles with complex edges.</p>
-    <p><strong>AI-powered</strong>: Fast, handles complex edges, no expertise required.</p>
-
-    <h2>Privacy Benefits of Browser-Based Tools</h2>
-    <p>Our background removal runs entirely in your browser using WebAssembly. Your images never upload to a server, making it the most private option available. This is especially important for businesses handling sensitive product photos.</p>
+    <h2>The quality decision</h2>
+    <p>HEIC at 50% looks roughly equal to JPG at 75% — so when converting, set JPG quality to 80–90% to preserve the original quality. Lower than that and you're losing detail twice.</p>
   `,
-  "heic-to-jpg-guide": `
-    <h2>What is HEIC?</h2>
-    <p>HEIC (High Efficiency Image Container) is Apple's default image format since iOS 11. It offers better compression than JPEG - roughly half the file size at equivalent quality.</p>
-
-    <h2>Why Convert to JPG?</h2>
+  'image-upscaling-explained': `
+    <h2>Bicubic vs neural</h2>
+    <p>Bicubic interpolation fills new pixels by averaging surrounding ones. It's fast and produces smooth, slightly soft enlargements. Neural upscaling (Real-ESRGAN, ESRGAN, SwinIR) hallucinates detail based on a learned prior — the results look sharper but the detail isn't real.</p>
+    <h2>When upscaling helps</h2>
     <ul>
-      <li><strong>Compatibility</strong> - JPG works everywhere, HEIC doesn't</li>
-      <li><strong>Web use</strong> - Browsers and websites prefer JPG</li>
-      <li><strong>Legacy devices</strong> - Older devices may not support HEIC</li>
-      <li><strong>Editing</strong> - Most image editors work better with JPG</li>
+      <li>Old photos for print — neural fills in detail bicubic can't</li>
+      <li>Small assets for high-DPI displays — 2× usually enough</li>
+      <li>Recovery of overcompressed JPGs — neural removes blocking</li>
     </ul>
-
-    <h2>How to Convert HEIC to JPG</h2>
-    <ol>
-      <li>Upload your HEIC file to our converter</li>
-      <li>Select output quality (default 85%)</li>
-      <li>Click convert - processing happens in your browser</li>
-      <li>Download your JPG file</li>
-    </ol>
-
-    <h2>HEIC on Windows and Android</h2>
-    <p>Windows 10/11 and Android require additional codecs to view HEIC. Our converter solves this by converting to universally compatible JPG, letting you view and use your iPhone photos anywhere.</p>
+    <h2>When it doesn't</h2>
+    <p>Faces and text are the failure modes. Real-ESRGAN smooths skin too aggressively (everyone looks 23) and turns small text into convincing-looking gibberish.</p>
   `,
-  "image-upscaling-explained": `
-    <h2>What is Image Upscaling?</h2>
-    <p>Upscaling increases an image's resolution - making it larger in pixel dimensions. Traditional upscaling simply adds pixels, often resulting in blurry or pixelated results. AI upscaling uses neural networks to intelligently add detail.</p>
-
-    <h2>Traditional vs. AI Upscaling</h2>
-    <p><strong>Bilinear/Bicubic interpolation</strong>: Fast, simple, but creates soft, blurry results. Good for modest enlargements (up to 2x).</p>
-    <p><strong>AI/Super Resolution</strong>: Uses trained neural networks to predict and add realistic detail. Can achieve 4x enlargement while maintaining sharpness.</p>
-
-    <h2>How AI Upscaling Works</h2>
-    <p>AI models are trained on millions of image pairs (low-res vs high-res). They learn patterns for edges, textures, and details. When upscaling, they apply this knowledge to generate plausible additional pixels.</p>
-
-    <h2>When to Use AI Upscaling</h2>
-    <ul>
-      <li>Enlarging old photos for print</li>
-      <li>Preparing small images for large displays</li>
-      <li>Enhancing compressed images</li>
-      <li>Creating assets for high-resolution projects</li>
-    </ul>
-
-    <h2>Browser-Based Upscaling</h2>
-    <p>Our upscale tool runs entirely in your browser using WebAssembly. Your images never leave your device, and you get AI-powered results without installing software.</p>
-  `
-};
+}
 ---
 
-<Base title={title} description={`Read our guide on ${title.toLowerCase()}.`}>
-  <article class="py-16 sm:py-20">
-    <div class="container mx-auto px-4 sm:px-6 lg:px-8 max-w-3xl">
-      <header class="mb-8">
-        <a href="/blog" class="text-[var(--color-primary)] hover:underline mb-4 inline-block">
-          Back to Blog
-        </a>
-        <h1 class="text-3xl sm:text-4xl font-extrabold text-[var(--color-text-main)] mb-4">
-          {title}
-        </h1>
-        <div class="flex items-center gap-3 text-[var(--color-text-muted)]">
-          <time>{date}</time>
-          <span aria-hidden="true">|</span>
-          <span>{readTime}</span>
-          <span aria-hidden="true">|</span>
-          <span>By Chirag</span>
-        </div>
-      </header>
+<BaseLayout
+  title={`${title} — image-tools`}
+  description={`Notes on ${title.toLowerCase()}.`}
+>
+  <header class="spine page-head">
+    <p class="eyebrow">
+      <a href="/">image-tools</a> / <a href="/blog/">blog</a> / {slug}
+    </p>
+    <h1>{title}</h1>
+    <p class="meta">
+      <time>{date}</time> · {readTime} · Chirag Singhal
+    </p>
+  </header>
 
-      <div class="prose prose-lg text-[var(--color-text-muted)]" set:html={content[slug || ""]} />
+  <article class="spine prose" set:html={content[slug || ''] ?? ''} />
 
-      <hr class="my-12 border-[var(--color-border)]" />
+  <section class="spine try-row">
+    <h2>Try the tools</h2>
+    <ul>
+      <li><a href="/tools/compress-image/" class="ghost mono">[ compress ]</a></li>
+      <li><a href="/tools/resize-image/" class="ghost mono">[ resize ]</a></li>
+      <li><a href="/tools/upscale-image/" class="ghost mono">[ upscale ]</a></li>
+    </ul>
+  </section>
+</BaseLayout>
 
-      <div class="bg-[var(--color-surface-2)] rounded-xl p-6">
-        <h2 class="text-xl font-bold text-[var(--color-text-main)] mb-3">Try These Tools</h2>
-        <p class="text-[var(--color-text-muted)] mb-4">
-          Put this knowledge into practice with our free online tools.
-        </p>
-        <div class="flex flex-wrap gap-3">
-          <a href="/tools/compress-image/" class="btn-secondary text-sm">Compress Images</a>
-          <a href="/tools/resize-image/" class="btn-secondary text-sm">Resize Images</a>
-          <a href="/tools/upscale-image/" class="btn-secondary text-sm">Upscale Images</a>
-        </div>
-      </div>
-    </div>
-  </article>
-</Base>
+<style>
+  .try-row {
+    padding-block: 2rem 4rem;
+    border-top: 1px solid var(--line);
+  }
+  .try-row h2 {
+    font-family: var(--font-display);
+    font-size: 1rem;
+    color: var(--fg);
+    margin: 0 0 1rem;
+  }
+  .try-row ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+  .ghost {
+    display: inline-flex;
+    align-items: center;
+    height: 36px;
+    padding-inline: 0.875rem;
+    border: 1px solid var(--line);
+    color: var(--fg);
+    font-size: 12px;
+    text-decoration: none;
+    border-radius: 4px;
+    transition: border-color 120ms, color 120ms;
+  }
+  .ghost:hover {
+    border-color: var(--phosphor);
+    color: var(--phosphor);
+  }
+</style>
