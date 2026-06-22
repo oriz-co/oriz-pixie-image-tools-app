@@ -1,0 +1,140 @@
+---
+/*
+ * Header — single line, 56px tall, no border-bottom, no shadow, padding 0 24px.
+ *
+ * Per design-briefs/oriz-image-tools.md §6:
+ *   - Left: wordmark `oriz · image-tools` in Space Grotesk 16/600 with a
+ *     centred middle-dot in --phosphor (NOT a slash, NOT a vermilion strike).
+ *   - Right (home): `⌘K` chip — mono 12px in --line outlined pill.
+ *   - Right (tool page): `[ ← all tools ]` breadcrumb in mono 12px linking
+ *     home. The chip is gone — the brackets are the affordance.
+ *   - NO nav menu, NO logo lockup, NO "Sign up".
+ */
+interface Props {
+  /** When true, show the `[ ← all tools ]` breadcrumb instead of the ⌘K chip. */
+  isToolPage?: boolean
+}
+
+const { isToolPage = false } = Astro.props
+---
+
+<header class="hdr">
+  <a href="/" class="brand" aria-label="oriz · image-tools — home">
+    <span class="brand-oriz">oriz</span>
+    <span class="brand-dot" aria-hidden="true">·</span>
+    <span class="brand-section">image-tools</span>
+  </a>
+
+  {
+    isToolPage ? (
+      <a href="/" class="back mono" aria-label="Back to all tools">
+        [ ← all tools ]
+      </a>
+    ) : (
+      <button type="button" class="kbd-chip mono" data-search-trigger aria-label="Focus search (Ctrl+K)">
+        <span class="kbd-key">⌘</span>
+        <span class="kbd-key">K</span>
+      </button>
+    )
+  }
+</header>
+
+<style>
+  .hdr {
+    height: 56px;
+    padding: 0 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--ink);
+    /* No border-bottom, no shadow — per spec. */
+    border: 0;
+    box-shadow: none;
+  }
+  .brand {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0.5em;
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 16px;
+    letter-spacing: -0.005em;
+    color: var(--paper);
+    text-decoration: none;
+    line-height: 1;
+  }
+  .brand-oriz {
+    color: var(--paper);
+  }
+  .brand-dot {
+    color: var(--phosphor);
+    font-weight: 600;
+    font-size: 1.05em;
+    transform: translateY(-0.05em);
+  }
+  .brand-section {
+    color: color-mix(in oklab, var(--paper) 88%, var(--ink));
+    font-weight: 500;
+  }
+  .brand:hover .brand-section {
+    color: var(--phosphor);
+  }
+  .brand:focus-visible {
+    outline: 2px solid var(--phosphor);
+    outline-offset: 4px;
+  }
+
+  .kbd-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0 0.625rem;
+    height: 26px;
+    background: transparent;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    color: var(--fg-mute);
+    font-family: var(--font-mono);
+    font-size: 12px;
+    font-feature-settings: 'tnum' 1, 'zero' 1, 'calt' 0;
+    cursor: pointer;
+    transition: border-color 120ms ease, color 120ms ease;
+  }
+  .kbd-chip:hover {
+    border-color: var(--phosphor);
+    color: var(--phosphor);
+  }
+  .kbd-chip:focus-visible {
+    outline: 2px solid var(--phosphor);
+    outline-offset: 2px;
+  }
+  .kbd-key {
+    line-height: 1;
+  }
+
+  .back {
+    color: var(--fg-mute);
+    font-family: var(--font-mono);
+    font-size: 12px;
+    font-feature-settings: 'tnum' 1, 'zero' 1, 'calt' 0;
+    text-decoration: none;
+    letter-spacing: 0.02em;
+  }
+  .back:hover {
+    color: var(--phosphor);
+  }
+  .back:focus-visible {
+    outline: 2px solid var(--phosphor);
+    outline-offset: 2px;
+  }
+</style>
+
+<script>
+  // Re-focus the home-page search field when the chip is clicked.
+  const trigger = document.querySelector('[data-search-trigger]') as HTMLButtonElement | null
+  trigger?.addEventListener('click', () => {
+    const f = document.querySelector('#tool-search') as HTMLInputElement | null
+    f?.focus()
+    f?.select()
+  })
+</script>

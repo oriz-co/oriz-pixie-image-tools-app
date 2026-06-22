@@ -1,0 +1,77 @@
+---
+/*
+ * AppSidebarContent — per-app sidebar slot for oriz · image-tools.
+ *
+ * Slotted into the package <Sidebar /> via Layout's `sidebar` slot.
+ * Lists the headline image tools + workspace shortcuts.
+ */
+const groups = [
+  {
+    label: 'Image tools',
+    items: [
+      { href: '/resize/', label: 'Resize' },
+      { href: '/convert/', label: 'Convert' },
+      { href: '/compress/', label: 'Compress' },
+      { href: '/background-remove/', label: 'Background remove' },
+      { href: '/crop/', label: 'Crop' },
+    ],
+  },
+  {
+    label: 'Workspace',
+    items: [
+      { href: '/recent/', label: 'Recent files' },
+      { href: '/saved/', label: 'Saved' },
+      { href: '/settings/', label: 'Settings' },
+    ],
+  },
+]
+---
+
+{
+  groups.map((g) => (
+    <section class="sb-group">
+      <h3 class="sb-heading">{g.label}</h3>
+      <ul class="sb-list">
+        {g.items.map((i) => (
+          <li>
+            <a href={i.href}>{i.label}</a>
+          </li>
+        ))}
+      </ul>
+    </section>
+  ))
+}
+
+<style>
+  .sb-group {
+    padding: 12px 16px;
+  }
+  .sb-heading {
+    margin: 0 0 8px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--fg-mute, var(--ink-mute));
+  }
+  .sb-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 2px;
+  }
+  .sb-list a {
+    display: block;
+    padding: 6px 8px;
+    border-radius: 6px;
+    color: var(--paper);
+    text-decoration: none;
+    font-size: 13px;
+  }
+  .sb-list a:hover {
+    background: color-mix(in oklab, var(--phosphor) 14%, transparent);
+    color: var(--phosphor);
+  }
+</style>

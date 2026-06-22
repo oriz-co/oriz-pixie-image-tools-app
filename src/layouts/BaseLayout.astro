@@ -1,24 +1,24 @@
 ---
 /*
- * BaseLayout — single page shell for image.oriz.in v2.
+ * BaseLayout — page shell for image.oriz.in.
  *
- * Two-zone layout:
- *   - Header (56px, no nav, no sidebar — see ./Header.astro)
- *   - <main> slot
- *   - Footer (32px filmstrip strip — see ./Footer.astro)
+ * Sweep #5 revert: per-app Header (local), package-provided Sidebar / Footer /
+ * BottomBar. AppSidebarContent slotted into the package Sidebar; per-app
+ * bottomBarActions feed the BottomBar.
  *
- * NO oriz-ui Sidebar (the v2 brief drops the left rail entirely; the home
- * page contact-sheet IS the navigation, and tool pages have a back-breadcrumb).
- * NO theme picker, NO accent picker — the darkroom palette is fixed.
- *
- * Auth & contact islands are mounted on individual pages as needed (see
- * /account.astro, /contact.astro). They render unstyled markup with
- * data-oriz-* hooks; src/styles/oriz-ui-overrides.css paints them in the
- * phosphor palette.
+ * Header is fully divergent across apps (this one keeps the ⌘K chip + tool
+ * breadcrumb). Footer and BottomBar import from @chirag127/astro-chrome so
+ * structure stays consistent family-wide.
  */
 import '~/styles/global.css'
 import '~/styles/oriz-ui-overrides.css'
-import Layout from '@chirag127/astro-chrome/Layout.astro'
+import '@chirag127/astro-shell/tokens.css'
+import Header from '~/components/Header.astro'
+import AppSidebarContent from '~/components/AppSidebarContent.astro'
+import Sidebar from '@chirag127/astro-chrome/Sidebar.astro'
+import Footer from '@chirag127/astro-chrome/Footer.astro'
+import BottomBar from '@chirag127/astro-chrome/BottomBar.astro'
+import { bottomBarActions } from '~/data/bottombar-actions'
 import { SITE_CONFIG } from '~/lib/siteConfig'
 
 interface Props {
@@ -27,10 +27,7 @@ interface Props {
   canonical?: string
   noindex?: boolean
   jsonLd?: Record<string, unknown> | Record<string, unknown>[]
-  /** Tool pages render the `[ ← all tools ]` breadcrumb instead of the ⌘K chip. */
   isToolPage?: boolean
-  /** When true, suppress the chrome footer. Used by tool layouts that mount
-   *  their own filmstrip-status row beneath a histogram strip. */
   bareFooter?: boolean
 }
 
@@ -47,13 +44,6 @@ const {
 const adsenseClient = import.meta.env.PUBLIC_ADSENSE_CLIENT
 const beaconToken = import.meta.env.PUBLIC_CF_BEACON_TOKEN
 const ga4Id = import.meta.env.PUBLIC_GA4_ID
-const bottomBarActions = [
-  { icon: '⌂', label: 'Home', href: 'https://oriz.in/' },
-  { icon: '✎', label: 'Blog', href: 'https://blog.oriz.in/' },
-  { icon: '⚒', label: 'Tools', href: '/' },
-  { icon: 'ℹ', label: 'About', href: '/about/' },
-]
-import '@chirag127/astro-shell/tokens.css'
 ---
 
 <!doctype html>
@@ -74,21 +64,13 @@ import '@chirag127/astro-shell/tokens.css'
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:site" content="@chirag127" />
     <meta name="theme-color" content="#0E1116" />
-
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-
-    {/*
-      Type stack — Space Grotesk display + Inter body + JetBrains Mono numerals.
-      Per design-briefs/oriz-image-tools.md §2 — Space Grotesk is the only
-      Space Grotesk site in the family. Mono carries EXIF, hex, dimensions.
-    */}
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
       rel="stylesheet"
       href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap"
     />
-
     {
       jsonLd && (
         <script
@@ -98,7 +80,6 @@ import '@chirag127/astro-shell/tokens.css'
         />
       )
     }
-
     {
       adsenseClient && (
         <script
@@ -109,7 +90,6 @@ import '@chirag127/astro-shell/tokens.css'
         />
       )
     }
-
     {
       beaconToken && (
         <script
@@ -120,7 +100,6 @@ import '@chirag127/astro-shell/tokens.css'
         />
       )
     }
-
     {
       ga4Id && (
         <>
@@ -139,14 +118,22 @@ import '@chirag127/astro-shell/tokens.css'
   </head>
   <body>
     <a href="#main" class="skip-link">Skip to content</a>
-    {bareFooter ? (
-      <>
-        <main id="main"><slot /></main>
-      </>
-    ) : (
-      <Layout bottomBarActions={bottomBarActions}>
-        <slot />
-      </Layout>
-    )}
+    <Header isToolPage={isToolPage} />
+    <div class="layout-body">
+      <Sidebar>
+        <AppSidebarContent />
+      </Sidebar>
+      <main id="main" class="layout-main"><slot /></main>
+    </div>
+    {!bareFooter && <Footer />}
+    <BottomBar actions={bottomBarActions} />
+    <style>
+      .layout-body { display: flex; align-items: flex-start; }
+      .layout-main { flex: 1 1 auto; min-width: 0; min-height: 50vh; }
+      @media (max-width: 767px) {
+        .layout-body { display: block; }
+        .layout-main { padding-bottom: 64px; }
+      }
+    </style>
   </body>
 </html>
