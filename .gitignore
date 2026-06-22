@@ -11,3 +11,7 @@ Thumbs.db
 coverage/
 playwright-report/
 test-results/
+
+# env (synced via sops + age)
+.env.*.local
+.sops-age-key.txt
